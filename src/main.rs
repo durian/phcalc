@@ -14,6 +14,7 @@ struct AppState {
 enum Message {
     Exit,
     UpdatePhDiameter(f32),
+    UpdatePhThickness(f32),
 }
 
 impl AppState {
@@ -31,7 +32,14 @@ impl AppState {
     fn update(&mut self, message: Message) {
         match message {
             Message::Exit => eprintln!("Exit"),
-            Message::UpdatePhDiameter(v) => self.ph_diameter = v,
+            Message::UpdatePhDiameter(v) => {
+                self.ph_diameter = v;
+                self.ph_viewangle = 0.1
+            }
+            Message::UpdatePhThickness(v) => {
+                self.ph_thickness = v;
+                self.ph_viewangle = 0.2
+            }
         }
     }
 
@@ -39,7 +47,9 @@ impl AppState {
         column![
             text("PHCalc").size(32),
             column![
+                // Label for this pane.
                 text("View angle").size(32),
+                // Value and slider.
                 row![
                     text(self.ph_diameter),
                     slider(0.01..=1.00, self.ph_diameter, |v| {
@@ -47,6 +57,14 @@ impl AppState {
                     })
                     .step(0.01),
                 ],
+                row![
+                    text(self.ph_thickness),
+                    slider(0.01..=1.00, self.ph_thickness, |v| {
+                        Message::UpdatePhThickness(v)
+                    })
+                    .step(0.01),
+                ],
+                // Calculated value.
                 text(self.ph_viewangle),
             ],
             column![text("Focal length").size(32),],
