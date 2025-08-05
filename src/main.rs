@@ -34,11 +34,11 @@ impl AppState {
             Message::Exit => eprintln!("Exit"),
             Message::UpdatePhDiameter(v) => {
                 self.ph_diameter = v;
-                self.ph_viewangle = 0.1
+                self.ph_viewangle = calc_viewangle(self.ph_diameter, self.ph_thickness)
             }
             Message::UpdatePhThickness(v) => {
                 self.ph_thickness = v;
-                self.ph_viewangle = 0.2
+                self.ph_viewangle = calc_viewangle(self.ph_diameter, self.ph_thickness)
             }
         }
     }
@@ -80,4 +80,10 @@ fn main() -> iced::Result {
     iced::application("PHCalc", AppState::update, AppState::view)
         .theme(|_| iced::Theme::KanagawaDragon)
         .run_with(AppState::new)
+}
+
+fn calc_viewangle(diameter: f32, thickness: f32) -> f32 {
+    let div = diameter / thickness;
+    let viewangle: f32 = div.atan();
+    viewangle / 3.1415 * 180.0
 }
