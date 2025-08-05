@@ -10,6 +10,7 @@ struct AppState {
     ph_viewangle: f32,
     ph_diagonal: f32,
     ph_focallength: f32,
+    ph_wavelength: f32,
 }
 
 #[derive(Debug, Clone)]
@@ -28,6 +29,7 @@ impl AppState {
             ph_viewangle: 0.0,
             ph_diagonal: 42.0,
             ph_focallength: 0.0,
+            ph_wavelength: 550.,
         };
 
         //  AppState::calc_viewangle(&state)
@@ -51,6 +53,10 @@ impl AppState {
     fn calc_focallength(&self) -> f32 {
         let div = self.ph_diameter / self.ph_thickness;
         0.5 * self.ph_diagonal / div
+    }
+
+    fn calc_optimalsize(&self) -> f32 {
+        1.9 * (self.ph_wavelength * self.ph_focallength / 1000000.).sqrt()
     }
 
     fn update(&mut self, message: Message) {
@@ -121,7 +127,7 @@ impl AppState {
                 text(format!("Focal length {:.0}  ", self.ph_focallength)),
             ],
             horizontal_rule(48),
-            column![text("Optimal size").size(32), text("something"),],
+            column![text("Optimal size").size(32), text(self.calc_optimalsize()),],
             horizontal_rule(48),
             // Exit is not implemented...
             /*
