@@ -1,6 +1,6 @@
 use iced::{
-    widget::{button, column, row, slider, text},
-    Element, Task,
+    widget::{button, column, horizontal_rule, row, slider, text},
+    Element, Length, Task,
 };
 
 #[derive(Debug, Default)]
@@ -46,32 +46,41 @@ impl AppState {
     fn view(&self) -> Element<Message> {
         column![
             text("PHCalc").size(32),
+            horizontal_rule(48),
             column![
                 // Label for this pane.
                 text("View angle").size(32),
                 // Value and slider.
                 row![
-                    text(self.ph_diameter),
+                    text(format!("diameter {:.2} mm  ", self.ph_diameter))
+                        .width(Length::FillPortion(1)),
                     slider(0.01..=1.00, self.ph_diameter, |v| {
                         Message::UpdatePhDiameter(v)
                     })
-                    .step(0.01),
-                ],
+                    .step(0.01)
+                    .width(Length::FillPortion(4)),
+                ]
+                .padding(16),
                 row![
-                    text(self.ph_thickness),
+                    text(format!("thickness {:.2} mm  ", self.ph_thickness))
+                        .width(Length::FillPortion(1)),
                     slider(0.01..=1.00, self.ph_thickness, |v| {
                         Message::UpdatePhThickness(v)
                     })
-                    .step(0.01),
-                ],
+                    .step(0.01)
+                    .width(Length::FillPortion(4)),
+                ]
+                .padding(16),
                 // Calculated value.
-                text(self.ph_viewangle),
+                text(format!("View angle {:.0} degrees", self.ph_viewangle)),
             ],
             column![text("Focal length").size(32),],
             button(text("Exit").size(24))
                 .padding(8)
                 .on_press(Message::Exit),
         ]
+        .spacing(20)
+        .padding(20)
         .into()
     }
 }
@@ -84,6 +93,6 @@ fn main() -> iced::Result {
 
 fn calc_viewangle(diameter: f32, thickness: f32) -> f32 {
     let div = diameter / thickness;
-    let viewangle: f32 = div.atan();
+    let viewangle: f32 = 2. * div.atan();
     viewangle / 3.1415 * 180.0
 }
