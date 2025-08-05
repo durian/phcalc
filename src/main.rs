@@ -34,17 +34,18 @@ impl AppState {
         state.ph_viewangle = state.calc_viewangle();
         state.ph_focallength = state.calc_focallength();
 
-        (state, Task::none()) //Self::boot())
+        (state, Task::none())
     }
 
     fn _close(id: window::Id) -> Task<Message> {
         window::close(id)
     }
 
+    // Note that this is half the total view angle.
     fn calc_viewangle(&self) -> f32 {
         let div = self.ph_diameter / self.ph_thickness;
         let viewangle: f32 = div.atan();
-        viewangle / 3.1415 * 180.0
+        viewangle / std::f32::consts::PI * 180.0
     }
 
     fn calc_focallength(&self) -> f32 {
