@@ -11,14 +11,20 @@ enum Message {
     Exit,
 }
 
-fn update(state: &mut AppState, message: Message) {}
+impl AppState {
+    fn update(state: &mut AppState, message: Message) {
+        match message {
+            Message::Exit => eprintln!("Exit"),
+        }
+    }
 
-fn view(state: &AppState) -> Element<Message> {
-    column![text("PHCalc"), button("Exit").on_press(Message::Exit),].into()
+    fn view(state: &AppState) -> Element<Message> {
+        column![text("PHCalc"), button("Exit").on_press(Message::Exit),].into()
+    }
 }
 
 fn main() -> iced::Result {
-    iced::application("PHCalc", update, view)
-        .theme(|_| iced::Theme::KanagawaDragon)
+    iced::application("PHCalc", AppState::update, AppState::view)
+        //.theme(|_| iced::Theme::KanagawaDragon)
         .run()
 }
