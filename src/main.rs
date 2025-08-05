@@ -46,7 +46,7 @@ impl AppState {
 
     fn calc_focallength(&self) -> f32 {
         let div = self.ph_diameter / self.ph_thickness;
-        0.5 * self.ph_diagonal / div.tan()
+        0.5 * self.ph_diagonal / div
     }
 
     fn update(&mut self, message: Message) {
@@ -134,13 +134,13 @@ fn main() -> iced::Result {
 }
 
 // These could be Impl in Appstate...
-fn calc_viewangle(diameter: f32, thickness: f32) -> f32 {
+fn _calc_viewangle(diameter: f32, thickness: f32) -> f32 {
     let div = diameter / thickness;
     let viewangle: f32 = div.atan();
     viewangle / 3.1415 * 180.0
 }
 
-fn calc_focallength(diagonal: f32, diameter: f32, thickness: f32) -> f32 {
+fn _calc_focallength(diagonal: f32, diameter: f32, thickness: f32) -> f32 {
     let div = diameter / thickness;
-    0.5 * diagonal / div.tan()
+    0.5 * diagonal / div
 }
