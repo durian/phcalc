@@ -22,16 +22,19 @@ enum Message {
 
 impl AppState {
     fn new() -> (Self, Task<Message>) {
-        (
-            Self {
-                ph_diameter: 0.05,
-                ph_thickness: 0.1,
-                ph_viewangle: 0.,
-                ph_diagonal: 42.,
-                ph_focallength: 0.,
-            },
-            Task::none(),
-        )
+        let mut state = Self {
+            ph_diameter: 0.05,
+            ph_thickness: 0.1,
+            ph_viewangle: 0.0,
+            ph_diagonal: 42.0,
+            ph_focallength: 0.0,
+        };
+
+        //  AppState::calc_viewangle(&state)
+        state.ph_viewangle = state.calc_viewangle();
+        state.ph_focallength = state.calc_focallength();
+
+        (state, Task::none()) //Self::boot())
     }
 
     fn _close(id: window::Id) -> Task<Message> {
@@ -117,9 +120,14 @@ impl AppState {
                 text(format!("Focal length {:.0}  ", self.ph_focallength)),
             ],
             horizontal_rule(48),
+            column![text("Optimal size").size(32), text("something"),],
+            horizontal_rule(48),
+            // Exit is not implemented...
+            /*
             button(text("Exit").size(24))
                 .padding(8)
                 .on_press(Message::Exit),
+            */
         ]
         .spacing(20)
         .padding(20)
