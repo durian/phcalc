@@ -1,5 +1,5 @@
 use iced::{
-    widget::{button, column, horizontal_rule, row, slider, text},
+    widget::{column, horizontal_rule, row, slider, text},
     window, Element, Length, Task,
 };
 
@@ -16,7 +16,6 @@ struct AppState {
 
 #[derive(Debug, Clone)]
 enum Message {
-    Exit,
     UpdatePhDiameter(f32),
     UpdatePhThickness(f32),
     UpdatePhDiagonal(f32),
@@ -39,7 +38,6 @@ impl AppState {
 
         //  AppState::calc_viewangle(&state)
         state.ph_viewangle = state.calc_viewangle();
-        //state.ph_focallength = state.calc_focallength();
 
         (state, Task::none())
     }
@@ -66,7 +64,6 @@ impl AppState {
 
     fn update(&mut self, message: Message) {
         match message {
-            Message::Exit => eprintln!("Exit"),
             Message::UpdatePhDiameter(v) => {
                 self.ph_diameter = v;
                 self.ph_viewangle = self.calc_viewangle();
@@ -191,16 +188,4 @@ fn main() -> iced::Result {
     iced::application("PHCalc", AppState::update, AppState::view)
         .theme(|_| iced::Theme::KanagawaDragon)
         .run_with(AppState::new)
-}
-
-// These could be Impl in Appstate...
-fn _calc_viewangle(diameter: f32, thickness: f32) -> f32 {
-    let div = diameter / thickness;
-    let viewangle: f32 = div.atan();
-    viewangle / 3.1415 * 180.0
-}
-
-fn _calc_focallength(diagonal: f32, diameter: f32, thickness: f32) -> f32 {
-    let div = diameter / thickness;
-    0.5 * diagonal / div
 }
