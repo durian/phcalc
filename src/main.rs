@@ -33,7 +33,7 @@ impl AppState {
             ph_diagonal: 42.0,
             ph_focallength: 50.0,
             ph_wavelength: 550.,
-            ph_rayleighfactor: 1.9,
+            ph_rayleighfactor: 1.56,
         };
 
         //  AppState::calc_viewangle(&state)
