@@ -144,7 +144,7 @@ impl AppState {
                 row![
                     text(format!("Wavelength {:.0} nm  ", self.ph_wavelength))
                         .width(Length::FillPortion(1)),
-                    slider(350.0..=650., self.ph_wavelength, |v| {
+                    slider(400.0..=700.0, self.ph_wavelength, |v| {
                         Message::UpdatePhWavelength(v)
                     })
                     .step(1.)
