@@ -11,6 +11,7 @@ struct AppState {
     ph_diagonal: f32,
     ph_focallength: f32,
     ph_wavelength: f32,
+    ph_rayleighfactor: f32,
 }
 
 #[derive(Debug, Clone)]
@@ -19,17 +20,21 @@ enum Message {
     UpdatePhDiameter(f32),
     UpdatePhThickness(f32),
     UpdatePhDiagonal(f32),
+    UpdatePhWavelength(f32),
+    UpdatePhRayleighFactor(f32),
+    UpdatePhFocallength(f32),
 }
 
 impl AppState {
     fn new() -> (Self, Task<Message>) {
         let mut state = Self {
-            ph_diameter: 0.05,
+            ph_diameter: 0.30,
             ph_thickness: 0.1,
             ph_viewangle: 0.0,
             ph_diagonal: 42.0,
             ph_focallength: 0.0,
             ph_wavelength: 550.,
+            ph_rayleighfactor: 1.9,
         };
 
         //  AppState::calc_viewangle(&state)
@@ -56,7 +61,7 @@ impl AppState {
     }
 
     fn calc_optimalsize(&self) -> f32 {
-        1.9 * (self.ph_wavelength * self.ph_focallength / 1000000.).sqrt()
+        self.ph_rayleighfactor * (self.ph_wavelength * self.ph_focallength / 1000000.).sqrt()
     }
 
     fn update(&mut self, message: Message) {
@@ -75,6 +80,17 @@ impl AppState {
             Message::UpdatePhDiagonal(v) => {
                 self.ph_diagonal = v;
                 self.ph_focallength = self.calc_focallength()
+            }
+            Message::UpdatePhWavelength(v) => {
+                self.ph_wavelength = v;
+                self.ph_focallength = self.calc_focallength()
+            }
+            Message::UpdatePhRayleighFactor(v) => {
+                self.ph_rayleighfactor = v;
+                self.ph_focallength = self.calc_focallength()
+            }
+            Message::UpdatePhFocallength(v) => {
+                self.ph_focallength = v;
             }
         }
     }
@@ -107,10 +123,28 @@ impl AppState {
                     .width(Length::FillPortion(4)),
                 ]
                 .padding(8),
-                // Calculated value.
                 text(format!("View angle {:.0} degrees", 2. * self.ph_viewangle)),
+                // Calculated value.
+                row![
+                    text(format!("diagonal {:.0} mm  ", self.ph_diagonal))
+                        .width(Length::FillPortion(1)),
+                    slider(10.0..=200., self.ph_diagonal, |v| {
+                        Message::UpdatePhDiagonal(v)
+                    })
+                    .step(1.)
+                    .width(Length::FillPortion(4)),
+                ]
+                .padding(8),
+                text(format!(
+                    "Focal length needed to cover is {} mm",
+                    self.calc_focallength()
+                )),
             ],
             horizontal_rule(48),
+            // Focal length calculation
+            // This is the focal length needed to cover the diagonal, should
+            // be a text field in the above pane instead.
+            /*
             column![
                 text("Focal length").size(32),
                 row![
@@ -125,9 +159,40 @@ impl AppState {
                 .padding(8),
                 // Calculated value.
                 text(format!("Focal length {:.0}  ", self.ph_focallength)),
-            ],
+            ],*/
             horizontal_rule(48),
-            column![text("Optimal size").size(32), text(self.calc_optimalsize()),],
+            // Optimal size calculation.
+            column![
+                text("Optimal size").size(32),
+                row![
+                    text(format!("Wavelength {:.0} nm  ", self.ph_wavelength))
+                        .width(Length::FillPortion(1)),
+                    slider(350.0..=650., self.ph_wavelength, |v| {
+                        Message::UpdatePhWavelength(v)
+                    })
+                    .step(1.)
+                    .width(Length::FillPortion(4)),
+                ],
+                row![
+                    text(format!("Focal length {:.0} mm  ", self.ph_focallength))
+                        .width(Length::FillPortion(1)),
+                    slider(1.0..=1000., self.ph_focallength, |v| {
+                        Message::UpdatePhFocallength(v)
+                    })
+                    .step(1.)
+                    .width(Length::FillPortion(4)),
+                ],
+                row![
+                    text(format!("Raylaigh factor {:.2}  ", self.ph_rayleighfactor))
+                        .width(Length::FillPortion(1)),
+                    slider(0.10..=3.00, self.ph_rayleighfactor, |v| {
+                        Message::UpdatePhRayleighFactor(v)
+                    })
+                    .step(0.01)
+                    .width(Length::FillPortion(4)),
+                ],
+                text(self.calc_optimalsize()),
+            ],
             horizontal_rule(48),
             // Exit is not implemented...
             /*
