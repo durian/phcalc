@@ -149,7 +149,8 @@ impl AppState {
                     })
                     .step(1.)
                     .width(Length::FillPortion(4)),
-                ],
+                ]
+                .padding(8),
                 row![
                     text(format!("Focal length {:.0} mm  ", self.ph_focallength))
                         .width(Length::FillPortion(1)),
@@ -158,17 +159,22 @@ impl AppState {
                     })
                     .step(1.)
                     .width(Length::FillPortion(4)),
-                ],
+                ]
+                .padding(8),
                 row![
-                    text(format!("Raylaigh factor {:.2}  ", self.ph_rayleighfactor))
+                    text(format!("Rayleigh factor {:.2}  ", self.ph_rayleighfactor))
                         .width(Length::FillPortion(1)),
                     slider(0.10..=3.00, self.ph_rayleighfactor, |v| {
                         Message::UpdatePhRayleighFactor(v)
                     })
                     .step(0.01)
                     .width(Length::FillPortion(4)),
-                ],
-                text(self.calc_optimalsize()),
+                ]
+                .padding(8),
+                text(format!(
+                    "Optimal pinhole diameter {:.2} mm",
+                    self.calc_optimalsize()
+                )),
             ],
             horizontal_rule(48),
             // Exit is not implemented...
