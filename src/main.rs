@@ -32,14 +32,14 @@ impl AppState {
             ph_thickness: 0.1,
             ph_viewangle: 0.0,
             ph_diagonal: 42.0,
-            ph_focallength: 0.0,
+            ph_focallength: 50.0,
             ph_wavelength: 550.,
             ph_rayleighfactor: 1.9,
         };
 
         //  AppState::calc_viewangle(&state)
         state.ph_viewangle = state.calc_viewangle();
-        state.ph_focallength = state.calc_focallength();
+        //state.ph_focallength = state.calc_focallength();
 
         (state, Task::none())
     }
@@ -70,24 +70,24 @@ impl AppState {
             Message::UpdatePhDiameter(v) => {
                 self.ph_diameter = v;
                 self.ph_viewangle = self.calc_viewangle();
-                self.ph_focallength = self.calc_focallength()
+                //self.ph_focallength = self.calc_focallength()
             }
             Message::UpdatePhThickness(v) => {
                 self.ph_thickness = v;
                 self.ph_viewangle = self.calc_viewangle();
-                self.ph_focallength = self.calc_focallength()
+                //self.ph_focallength = self.calc_focallength()
             }
             Message::UpdatePhDiagonal(v) => {
                 self.ph_diagonal = v;
-                self.ph_focallength = self.calc_focallength()
+                //self.ph_focallength = self.calc_focallength()
             }
             Message::UpdatePhWavelength(v) => {
                 self.ph_wavelength = v;
-                self.ph_focallength = self.calc_focallength()
+                //self.ph_focallength = self.calc_focallength()
             }
             Message::UpdatePhRayleighFactor(v) => {
                 self.ph_rayleighfactor = v;
-                self.ph_focallength = self.calc_focallength()
+                //self.ph_focallength = self.calc_focallength()
             }
             Message::UpdatePhFocallength(v) => {
                 self.ph_focallength = v;
@@ -136,30 +136,10 @@ impl AppState {
                 ]
                 .padding(8),
                 text(format!(
-                    "Focal length needed to cover is {} mm",
+                    "Focal length needed to cover diagonal is {:.0} mm",
                     self.calc_focallength()
                 )),
             ],
-            horizontal_rule(48),
-            // Focal length calculation
-            // This is the focal length needed to cover the diagonal, should
-            // be a text field in the above pane instead.
-            /*
-            column![
-                text("Focal length").size(32),
-                row![
-                    text(format!("diagonal {:.0} mm  ", self.ph_diagonal))
-                        .width(Length::FillPortion(1)),
-                    slider(10.0..=200., self.ph_diagonal, |v| {
-                        Message::UpdatePhDiagonal(v)
-                    })
-                    .step(1.)
-                    .width(Length::FillPortion(4)),
-                ]
-                .padding(8),
-                // Calculated value.
-                text(format!("Focal length {:.0}  ", self.ph_focallength)),
-            ],*/
             horizontal_rule(48),
             // Optimal size calculation.
             column![
