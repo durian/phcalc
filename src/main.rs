@@ -49,7 +49,7 @@ impl AppState {
     fn calc_viewangle(&self) -> f32 {
         let div = self.ph_diameter / self.ph_thickness;
         let viewangle: f32 = div.atan();
-        viewangle / std::f32::consts::PI * 180.0
+        viewangle.to_degrees()
     }
 
     fn calc_optimalsize(&self) -> f32 {
