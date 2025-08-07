@@ -166,14 +166,12 @@ impl AppState {
                     "Optimal pinhole diameter {:.2} mm",
                     self.calc_optimalsize()
                 )),
+                text(format!(
+                    "Coverage radius based on focal length and view angle {:.0} mm",
+                    self.ph_focallength / (90.0 - (self.ph_viewangle)).to_radians().tan()
+                )),
             ],
             horizontal_rule(48),
-            // Test
-            //self.ph_coverage = self.ph_focallength / (90.0 - self.ph_viewangle).tan();
-            text(format!(
-                "Coverage radius {:.0} mm",
-                self.ph_focallength / (90.0 - (self.ph_viewangle)).to_radians().tan()
-            )),
         ]
         .spacing(20)
         .padding(20)
