@@ -12,6 +12,7 @@ struct AppState {
     ph_focallength: f32,
     ph_wavelength: f32,
     ph_rayleighfactor: f32,
+    ph_coverage: f32,
 }
 
 #[derive(Debug, Clone)]
@@ -34,6 +35,7 @@ impl AppState {
             ph_focallength: 50.0,
             ph_wavelength: 550.,
             ph_rayleighfactor: 1.56,
+            ph_coverage: 0.,
         };
 
         state.ph_viewangle = state.calc_viewangle();
@@ -50,12 +52,6 @@ impl AppState {
         let div = self.ph_diameter / self.ph_thickness;
         let viewangle: f32 = div.atan();
         viewangle / std::f32::consts::PI * 180.0
-    }
-
-    // Diagonal should be called diameter?
-    fn calc_focallength(&self) -> f32 {
-        let div = self.ph_diameter / self.ph_thickness;
-        0.5 * self.ph_diagonal / div
     }
 
     fn calc_optimalsize(&self) -> f32 {
@@ -118,7 +114,7 @@ impl AppState {
                 text(format!("View angle {:.0} degrees", 2. * self.ph_viewangle)),
                 // Calculated value.
                 row![
-                    text(format!("diagonal {:.0} mm  ", self.ph_diagonal))
+                    text(format!("radius {:.0} mm  ", self.ph_diagonal))
                         .width(Length::FillPortion(1)),
                     slider(10.0..=200., self.ph_diagonal, |v| {
                         Message::UpdatePhDiagonal(v)
@@ -128,8 +124,8 @@ impl AppState {
                 ]
                 .padding(8),
                 text(format!(
-                    "Focal length needed to cover diagonal is {:.0} mm",
-                    self.calc_focallength()
+                    "Focal length needed to cover radius is {:.0} mm",
+                    self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
                 )),
             ],
             horizontal_rule(48),
@@ -172,6 +168,12 @@ impl AppState {
                 )),
             ],
             horizontal_rule(48),
+            // Test
+            //self.ph_coverage = self.ph_focallength / (90.0 - self.ph_viewangle).tan();
+            text(format!(
+                "Coverage radius {:.0} mm",
+                self.ph_focallength / (90.0 - (self.ph_viewangle)).to_radians().tan()
+            )),
         ]
         .spacing(20)
         .padding(20)
