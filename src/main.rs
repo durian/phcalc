@@ -200,6 +200,7 @@ fn _third_stops(fstop: f32) -> f32 {
 }
 
 // Decimal part * 3 will give a "thirds of a stop" approximation.
+// Factor was 6. for 1/3rd stops, now we return stops.
 fn delta_thirds(fstop0: f32, fstop1: f32) -> f32 {
-    (fstop1 / fstop0).log2() // multiply by 6 for 1/3rd stops.
+    2. * (fstop1 / fstop0).log2() // multiply by 6 for 1/3rd stops.
 }
