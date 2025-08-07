@@ -12,7 +12,6 @@ struct AppState {
     ph_focallength: f32,
     ph_wavelength: f32,
     ph_rayleighfactor: f32,
-    ph_coverage: f32,
 }
 
 #[derive(Debug, Clone)]
@@ -35,7 +34,6 @@ impl AppState {
             ph_focallength: 50.0,
             ph_wavelength: 550.,
             ph_rayleighfactor: 1.56,
-            ph_coverage: 0.,
         };
 
         state.ph_viewangle = state.calc_viewangle();
@@ -149,6 +147,7 @@ impl AppState {
                         Message::UpdatePhFocallength(v)
                     })
                     .step(1.)
+                    .shift_step(0.1)
                     .width(Length::FillPortion(4)),
                 ]
                 .padding(8),
@@ -170,6 +169,14 @@ impl AppState {
                     "Coverage radius based on focal length and view angle {:.0} mm",
                     self.ph_focallength / (90.0 - (self.ph_viewangle)).to_radians().tan()
                 )),
+                text(format!(
+                    "Effective f-stop based on focal length and pinhole diameter f/{:.0}",
+                    self.ph_focallength / self.ph_diameter
+                )),
+                text(format!(
+                    "Distance from f/32 is {:.1} stops",
+                    delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
+                )),
             ],
             horizontal_rule(48),
         ]
@@ -183,4 +190,16 @@ fn main() -> iced::Result {
     iced::application("Pinhole Calculations", AppState::update, AppState::view)
         .theme(|_| iced::Theme::KanagawaDragon)
         .run_with(AppState::new)
+}
+
+fn _third_stops(fstop: f32) -> f32 {
+    let base = 6f32.sqrt();
+
+    let n = 3.0 * fstop.log2() / base.log2();
+    n
+}
+
+// Decimal part * 3 will give a "thirds of a stop" approximation.
+fn delta_thirds(fstop0: f32, fstop1: f32) -> f32 {
+    (fstop1 / fstop0).log2() // multiply by 6 for 1/3rd stops.
 }
