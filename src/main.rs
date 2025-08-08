@@ -204,3 +204,40 @@ fn _third_stops(fstop: f32) -> f32 {
 fn delta_thirds(fstop0: f32, fstop1: f32) -> f32 {
     2. * (fstop1 / fstop0).log2() // multiply by 6 for 1/3rd stops.
 }
+
+// 0.56 (eg from cos^4) is 0.84 stops darker.
+fn stop_equivalent(fract: f32) -> f32 {
+    -fract.log2()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    // Hard top test one stop because sqrt(2)s.
+    fn two_stops() {
+        let diff = delta_thirds(32., 64.);
+        assert_eq!(diff, 2.);
+    }
+
+    #[test]
+    // Hard top test one stop because sqrt(2)s.
+    fn four_stops() {
+        let diff = delta_thirds(16., 64.);
+        assert_eq!(diff, 4.);
+    }
+
+    #[test]
+    fn foo() {
+        let (state, _task) = AppState::new();
+        let va = state.calc_viewangle();
+        assert_eq!(va, 80.53768);
+    }
+
+    #[test]
+    fn vignetting() {
+        let v = stop_equivalent(0.25);
+        assert_eq!(v, 2.);
+    }
+}
