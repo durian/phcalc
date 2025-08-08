@@ -135,7 +135,7 @@ impl AppState {
                     self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
                 )),
                 text(format!(
-                    "Vignetting {:.1} stops at {:.1} degrees view angle",
+                    "Vignetting {:.1} f-stops at {:.1} degrees view angle",
                     //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
                     stop_equivalent(self.calc_vignetting().0),
                     2. * self.calc_vignetting().1
@@ -189,7 +189,7 @@ impl AppState {
                     self.ph_focallength / self.ph_diameter
                 )),
                 text(format!(
-                    "Distance from f/32 is {:.1} stops",
+                    "Distance from f/32 is {:.1} f-stops",
                     delta_thirds(32f32, self.ph_focallength / self.ph_diameter)
                 )),
             ],
@@ -203,7 +203,7 @@ impl AppState {
 
 fn main() -> iced::Result {
     iced::application("Pinhole Calculations", AppState::update, AppState::view)
-        .theme(|_| iced::Theme::KanagawaDragon)
+        .theme(|_| iced::Theme::KanagawaWave)
         .run_with(AppState::new)
 }
 
