@@ -56,6 +56,15 @@ impl AppState {
         self.ph_rayleighfactor * (self.ph_wavelength * self.ph_focallength / 1000000.).sqrt()
     }
 
+    // from https://cral-perso.univ-lyon1.fr/labo/fc/cdroms/cdrom2004/cd_venus/documents/pinhole/pinhole_imaging.html
+    fn calc_vignetting(&self) -> (f32, f32) {
+        let div = self.ph_focallength / self.ph_diagonal;
+        let angle = 90. - div.atan().to_degrees();
+        let cos4 = angle.to_radians().cos(); //.to_degrees();
+        let cos4 = cos4.powi(4);
+        (cos4, angle)
+    }
+
     fn update(&mut self, message: Message) {
         match message {
             Message::UpdatePhDiameter(v) => {
@@ -112,7 +121,7 @@ impl AppState {
                 text(format!("View angle {:.0} degrees", 2. * self.ph_viewangle)),
                 // Calculated value.
                 row![
-                    text(format!("radius {:.0} mm  ", self.ph_diagonal))
+                    text(format!("film radius {:.0} mm  ", self.ph_diagonal))
                         .width(Length::FillPortion(1)),
                     slider(10.0..=200., self.ph_diagonal, |v| {
                         Message::UpdatePhDiagonal(v)
@@ -124,6 +133,12 @@ impl AppState {
                 text(format!(
                     "Focal length needed to cover radius is {:.0} mm",
                     self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
+                )),
+                text(format!(
+                    "Vignetting {:.1} stops at {:.1} degrees view angle",
+                    //self.ph_diagonal * (90. - self.ph_viewangle).to_radians().tan()
+                    stop_equivalent(self.calc_vignetting().0),
+                    2. * self.calc_vignetting().1
                 )),
             ],
             horizontal_rule(48),
@@ -143,7 +158,7 @@ impl AppState {
                 row![
                     text(format!("Focal length {:.0} mm  ", self.ph_focallength))
                         .width(Length::FillPortion(1)),
-                    slider(1.0..=1000., self.ph_focallength, |v| {
+                    slider(1.0..=500., self.ph_focallength, |v| {
                         Message::UpdatePhFocallength(v)
                     })
                     .step(1.)
