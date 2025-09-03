@@ -90,7 +90,7 @@ impl AppState {
         }
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         column![
             text("Pinhole Calculations").size(32),
             horizontal_rule(48),
