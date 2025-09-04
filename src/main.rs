@@ -1,6 +1,7 @@
 use iced::{
+    Element, Length, Task,
     widget::{column, horizontal_rule, row, slider, text},
-    window, Element, Length, Task,
+    window,
 };
 
 #[derive(Debug, Default)]
@@ -90,6 +91,7 @@ impl AppState {
         }
     }
 
+    // fix by clippy
     fn view(&self) -> Element<'_, Message> {
         column![
             text("Pinhole Calculations").size(32),
