@@ -28,6 +28,6 @@ jobs:
       - name: Publish artifacts and release
         uses: houseabsolute/actions-rust-release@v0
         with:
-          executable-name: phcalc.${{ matrix.platform.target }}
+          executable-name: phcalc
           target: ${{ matrix.platform.target }}
         if: matrix.toolchain == 'stable'
